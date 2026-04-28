@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedShield AI Scanner</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#2563eb">
+</head>
+<body class="bg-slate-50 font-sans min-h-screen flex flex-col">
+
+    <nav class="bg-blue-700 p-4 text-white shadow-md text-center">
+        <h1 class="text-xl font-bold tracking-tight">MEDSHIELD AI PRO</h1>
+    </nav>
+
+    <main class="flex-grow flex items-center justify-center p-4">
+        <div class="bg-white p-8 rounded-3xl shadow-xl w-full max-w-sm text-center border border-slate-100">
+            <div class="mb-6">
+                <img src="logo.png" alt="MedShield Logo" id="appLogo" class="w-24 h-24 mx-auto rounded-2xl shadow-sm border p-1 object-cover">
+            </div>
+
+            <h2 class="text-2xl font-extrabold text-slate-800">Welcome, Pharmacist</h2>
+            <p class="text-slate-500 mt-2 text-sm">Smart AI Expiry Scanner & Inventory Tool</p>
+
+            <div class="mt-4 text-xs font-medium text-green-600 bg-green-50 py-1 px-3 rounded-full inline-block">
+                App Ready for Install
+            </div>
+
+            <button id="installBtn" class="mt-8 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-6 rounded-2xl shadow-lg shadow-blue-200 transition-all active:scale-95">
+                Download & Install App
+            </button>
+        </div>
+    </main>
+
+    <script>
+        // Service Worker Setup
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js')
+            .then(() => console.log("PWA Service Worker Registered"));
+        }
+
+        // Install Logic
+        let deferredPrompt;
+        const installBtn = document.getElementById('installBtn');
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            // Button dikhana
+            installBtn.style.display = 'block';
+        });
+
+        installBtn.addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') {
+                    console.log('User accepted install');
+                }
+                deferredPrompt = null;
+            } else {
+                alert("Browser ne abhi install allow nahi kiya hai. Ek baar page refresh karein.");
+            }
+        });
+    </script>
+</body>
+</html>
